@@ -57,42 +57,76 @@ export default function HeroSection() {
 
     let currentFrame = 0
     let rafId: number | null = null
+    let isAnimating = false
 
-    const handleScroll = () => {
-      if (rafId !== null) return
-      rafId = requestAnimationFrame(() => {
-        rafId = null
-
-        const scrollY = window.scrollY
-        // Use getBoundingClientRect for accurate document-relative top
-        const top = container.getBoundingClientRect().top + scrollY
-        const scrollable = container.offsetHeight - window.innerHeight
-        if (scrollable <= 0) return
-
-        const progress = Math.max(0, Math.min(1, (scrollY - top) / scrollable))
-        const target = Math.round(progress * (TOTAL_FRAMES - 1))
-
-        if (target !== currentFrame) {
-          currentFrame = target
-          drawFrame(target)
-        }
-
-        // Headline: visible immediately, fades out between 15%–35% scroll
-        if (overlayRef.current) {
-          const fadeOut = Math.max(0, Math.min(1, (progress - 0.15) / 0.20))
-          const ty = -30 * fadeOut
-          overlayRef.current.style.opacity = String(1 - fadeOut)
-          overlayRef.current.style.transform = `translateY(${ty}px)`
-        }
-
-        // Scroll hint: fades out in first 10%
-        if (scrollHintRef.current) {
-          scrollHintRef.current.style.opacity = String(Math.max(0, 1 - progress / 0.10))
-        }
-      })
+    const updateOverlay = (progress: number) => {
+      if (overlayRef.current) {
+        const fadeOut = Math.max(0, Math.min(1, (progress - 0.15) / 0.20))
+        const ty = -30 * fadeOut
+        overlayRef.current.style.opacity = String(1 - fadeOut)
+        overlayRef.current.style.transform = `translateY(${ty}px)`
+      }
+      if (scrollHintRef.current) {
+        scrollHintRef.current.style.opacity = String(Math.max(0, 1 - progress / 0.10))
+      }
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    const animateFrames = (forward: boolean) => {
+      if (isAnimating) return
+      isAnimating = true
+      
+      const target = forward ? TOTAL_FRAMES - 1 : 0
+      let lastTime: number | null = null
+      let exactFrameFloat = currentFrame
+
+      const loop = (time: number) => {
+        if (lastTime === null) lastTime = time
+        const dt = time - lastTime
+        lastTime = time
+
+        const framesToAdvance = dt / (1000 / 60)
+
+        if (forward) {
+          exactFrameFloat += framesToAdvance
+          if (exactFrameFloat >= target) exactFrameFloat = target
+        } else {
+          exactFrameFloat -= framesToAdvance
+          if (exactFrameFloat <= target) exactFrameFloat = target
+        }
+
+        currentFrame = Math.round(exactFrameFloat)
+        drawFrame(currentFrame)
+        updateOverlay(currentFrame / (TOTAL_FRAMES - 1))
+
+        if ((forward && exactFrameFloat < target) || (!forward && exactFrameFloat > target)) {
+          rafId = requestAnimationFrame(loop)
+        } else {
+          isAnimating = false
+          rafId = null
+        }
+      }
+
+      rafId = requestAnimationFrame(loop)
+    }
+
+    const handleWheel = (e: WheelEvent) => {
+      if (isAnimating) return
+      
+      const threshold = 10
+      if (Math.abs(e.deltaY) > threshold) {
+        if (e.deltaY > 0) {
+          if (currentFrame < TOTAL_FRAMES - 1) {
+            animateFrames(true)
+          }
+        } else {
+          if (currentFrame > 0) {
+            animateFrames(false)
+          }
+        }
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: true })
 
     // Load all frames; draw frame 0 as soon as it loads
     for (let i = 0; i < TOTAL_FRAMES; i++) {
@@ -109,11 +143,11 @@ export default function HeroSection() {
     }
 
     // Run once to initialize
-    handleScroll()
+    updateOverlay(0)
 
     return () => {
       window.removeEventListener('resize', sizeCanvas)
-      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('wheel', handleWheel)
       if (rafId !== null) cancelAnimationFrame(rafId)
     }
   }, [])
