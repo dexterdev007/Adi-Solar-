@@ -12,6 +12,7 @@ export default function HeroSection() {
   const overlayRef = useRef<HTMLDivElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
+  const floatingCtaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -68,6 +69,12 @@ export default function HeroSection() {
       }
       if (scrollHintRef.current) {
         scrollHintRef.current.style.opacity = String(Math.max(0, 1 - progress / 0.10))
+      }
+      if (floatingCtaRef.current) {
+        // Fade in floating CTA at the very end of the animation (last 15%)
+        const fadeIn = Math.max(0, Math.min(1, (progress - 0.85) / 0.15))
+        floatingCtaRef.current.style.opacity = String(fadeIn)
+        floatingCtaRef.current.style.pointerEvents = fadeIn > 0.5 ? 'auto' : 'none'
       }
     }
 
@@ -266,7 +273,9 @@ export default function HeroSection() {
       {/* Floating Image CTA Over Cloud */}
       <div className="sticky top-0 h-[100vh] w-full pointer-events-none z-20" style={{ marginTop: '-100vh' }}>
         <div 
-          className="pointer-events-auto absolute top-[20%] left-1/2 -translate-x-1/2 md:top-[42%] md:left-[18%] md:-translate-x-1/2 md:-translate-y-1/2"
+          ref={floatingCtaRef}
+          className="absolute top-[20%] left-1/2 -translate-x-1/2 md:top-[42%] md:left-[18%] md:-translate-x-1/2 md:-translate-y-1/2"
+          style={{ opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s ease' }}
         >
           <div 
             className="animate-breath-cta flex flex-col items-center justify-center p-6 rounded-[14px] cursor-pointer transition-all duration-300 hover:scale-[1.05] hover:shadow-2xl"
@@ -278,10 +287,10 @@ export default function HeroSection() {
             }}
             onClick={scrollToContact}
           >
-            <img src="/cta-image.png" alt="Book Consultation" className="w-32 md:w-40 h-auto object-contain mb-3 drop-shadow-sm mix-blend-multiply" />
-            <span className="font-bold tracking-wide text-gray-900 text-sm md:text-base whitespace-nowrap">
-              🟡 Book Free Consultation
-            </span>
+            <img src="/cta-image.png" alt="Book Consultation" className="w-32 md:w-40 h-auto object-contain mb-4 drop-shadow-sm mix-blend-multiply" />
+            <div className="bg-solar-yellow text-white font-bold tracking-wide text-sm md:text-base px-6 py-2.5 rounded-full shadow-md whitespace-nowrap">
+              Book Free Consultation
+            </div>
           </div>
         </div>
       </div>
