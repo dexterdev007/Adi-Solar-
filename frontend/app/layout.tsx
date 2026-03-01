@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     description: 'Expert solar panel installation for homes, businesses & industry. Free site visit.',
     type: 'website',
   },
+  icons: {
+    icon: '/favicon.ico?v=2',
+  },
 }
 
 export default function RootLayout({
