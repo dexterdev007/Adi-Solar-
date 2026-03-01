@@ -263,6 +263,29 @@ export default function HeroSection() {
 
       </div>
 
+      {/* Floating Image CTA Over Cloud */}
+      <div className="sticky top-0 h-[100vh] w-full pointer-events-none z-20" style={{ marginTop: '-100vh' }}>
+        <div 
+          className="pointer-events-auto absolute top-[20%] left-1/2 -translate-x-1/2 md:top-[42%] md:left-[18%] md:-translate-x-1/2 md:-translate-y-1/2"
+        >
+          <div 
+            className="animate-breath-cta flex flex-col items-center justify-center p-6 rounded-[14px] cursor-pointer transition-all duration-300 hover:scale-[1.05] hover:shadow-2xl"
+            style={{
+              background: 'rgba(255,255,255,0.75)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+            }}
+            onClick={scrollToContact}
+          >
+            <img src="/cta-image.png" alt="Book Consultation" className="w-32 md:w-40 h-auto object-contain mb-3 drop-shadow-sm mix-blend-multiply" />
+            <span className="font-bold tracking-wide text-gray-900 text-sm md:text-base whitespace-nowrap">
+              🟡 Book Free Consultation
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Scroll hint — fixed to bottom of viewport, fades as user scrolls */}
       <div
         ref={scrollHintRef}
