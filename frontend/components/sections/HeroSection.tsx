@@ -103,6 +103,21 @@ export default function HeroSection() {
         } else {
           isAnimating = false
           rafId = null
+          
+          if (container) {
+            const heroTop = container.offsetTop
+            const heroBottom = heroTop + container.offsetHeight - window.innerHeight
+            
+            if (forward) {
+              if (window.scrollY < heroBottom) {
+                window.scrollTo({ top: heroBottom, behavior: 'auto' })
+              }
+            } else {
+              if (window.scrollY > heroTop) {
+                window.scrollTo({ top: heroTop, behavior: 'auto' })
+              }
+            }
+          }
         }
       }
 
@@ -110,23 +125,32 @@ export default function HeroSection() {
     }
 
     const handleWheel = (e: WheelEvent) => {
-      if (isAnimating) return
+      const heroTop = container.offsetTop
+      const heroBottom = heroTop + container.offsetHeight - window.innerHeight
+      const inHero = window.scrollY >= heroTop && window.scrollY <= heroBottom + 5
+      
+      if (isAnimating) {
+        if (inHero && e.cancelable) e.preventDefault()
+        return
+      }
       
       const threshold = 10
-      if (Math.abs(e.deltaY) > threshold) {
+      if (Math.abs(e.deltaY) > threshold && inHero) {
         if (e.deltaY > 0) {
           if (currentFrame < TOTAL_FRAMES - 1) {
+            if (e.cancelable) e.preventDefault()
             animateFrames(true)
           }
         } else {
-          if (currentFrame > 0) {
+          if (currentFrame > 0 && window.scrollY <= heroBottom) {
+            if (e.cancelable) e.preventDefault()
             animateFrames(false)
           }
         }
       }
     }
 
-    window.addEventListener('wheel', handleWheel, { passive: true })
+    window.addEventListener('wheel', handleWheel, { passive: false })
 
     // Load all frames; draw frame 0 as soon as it loads
     for (let i = 0; i < TOTAL_FRAMES; i++) {
