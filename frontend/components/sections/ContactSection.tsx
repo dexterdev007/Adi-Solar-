@@ -38,10 +38,32 @@ export default function ContactSection() {
       return
     }
     setSubmitting(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setSubmitting(false)
-    setSubmitted(true)
+    setError('')
+    
+    try {
+      const res = await fetch('http://localhost:5001/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          property_type: formData.service,
+          message: formData.message,
+          source: 'contact_form'
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to submit request');
+      
+      setSubmitted(true)
+    } catch (err: any) {
+      console.error(err);
+      setError('An error occurred. Please try calling us directly.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (

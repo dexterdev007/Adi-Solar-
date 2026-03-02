@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/ThemeProvider'
 import Navbar from '@/components/Navbar'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import ThemeToggle from '@/components/ThemeToggle'
+import { AuthProvider } from '@/components/admin/AuthContext'
 
 export const metadata: Metadata = {
   title: 'Adi Solar — Harness the Power of the Sun',
@@ -36,12 +37,14 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ThemeProvider>
-          <Navbar />
-          <ThemeToggle />
-          <main>{children}</main>
-          <WhatsAppButton />
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <Navbar />
+            <ThemeToggle />
+            <main>{children}</main>
+            <WhatsAppButton />
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   )

@@ -1,0 +1,53 @@
+// backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+  role       String   @default("ADMIN")
+  created_at DateTime @default(now())
+}
+
+model Lead {
+  id            String      @id @default(uuid())
+  name          String
+  phone         String
+  email         String?
+  property_type String?
+  location      String?
+  message       String?
+  source        String?     // 'contact_form', 'hero_cta'
+  status        String      @default("NEW") // 'NEW', 'CONTACTED', 'SITE_VISIT_SCHEDULED', 'CONVERTED', 'REJECTED'
+  notes         String?
+  site_visits   SiteVisit[]
+  created_at    DateTime    @default(now())
+}
+
+model SiteVisit {
+  id             String   @id @default(uuid())
+  lead_id        String
+  lead           Lead     @relation(fields: [lead_id], references: [id], onDelete: Cascade)
+  preferred_date String?
+  preferred_time String?
+  roof_type      String?
+  created_at     DateTime @default(now())
+}
+
+model Analytics {
+  id          String   @id @default(uuid())
+  page        String
+  action      String
+  device_type String?
+  ip_address  String?
+  created_at  DateTime @default(now())
+}

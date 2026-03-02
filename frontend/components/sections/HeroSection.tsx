@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import SiteVisitModal from '../SiteVisitModal'
 
 const TOTAL_FRAMES = 240
 const FRAME_PATH = (i: number) =>
@@ -13,6 +14,8 @@ export default function HeroSection() {
   const ctaRef = useRef<HTMLDivElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const floatingCtaRef = useRef<HTMLDivElement>(null)
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -184,10 +187,7 @@ export default function HeroSection() {
   }, [])
 
   const scrollToContact = () => {
-    const el = document.querySelector('#contact')
-    if (el) {
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 72, behavior: 'smooth' })
-    }
+    setIsModalOpen(true);
   }
 
   return (
@@ -317,6 +317,8 @@ export default function HeroSection() {
           <polyline points="6 9 12 15 18 9"/>
         </svg>
       </div>
+
+      <SiteVisitModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   )
 }
