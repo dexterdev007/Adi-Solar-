@@ -8,29 +8,6 @@ import { requireAdmin, AdminRequest } from '../middlewares/auth.middleware';
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
-// Admin Login
-router.post('/login', (req, res) => {
-  const schema = z.object({ email: z.string().email(), password: z.string() });
-  try {
-    const { email, password } = schema.parse(req.body);
-    const admin = db.prepare('SELECT * FROM Admin WHERE email = ?').get(email) as any;
-    
-    if (!admin || !bcrypt.compareSync(password, admin.password)) {
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign(
-      { id: admin.id, role: admin.role, email: admin.email },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.json({ success: true, token, admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
-  } catch (error) {
-    res.status(400).json({ success: false, error: 'Invalid request data' });
-  }
-});
-
 // GET all leads (Protected)
 router.get('/leads', requireAdmin, (req: AdminRequest, res) => {
   try {

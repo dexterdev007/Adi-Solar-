@@ -65,4 +65,30 @@ export function initDb() {
     
     console.log('Default super admin created: admin@adisolar.com / admin123');
   }
+
+  // Create User table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS User (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      role TEXT DEFAULT 'USER',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // Seed default user if none exists
+  const userCount = db.prepare('SELECT COUNT(*) as count FROM User').get() as { count: number };
+  if (userCount.count === 0) {
+    const saltRounds = 10;
+    const hashedPassword = bcrypt.hashSync('user123', saltRounds);
+    
+    db.prepare(`
+      INSERT INTO User (id, name, email, password, role)
+      VALUES (?, ?, ?, ?, ?)
+    `).run('user-1', 'Demo User', 'user@adisolar.com', hashedPassword, 'USER');
+    
+    console.log('Default demo user created: user@adisolar.com / user123');
+  }
 }

@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { db } from '../db';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const router = Router();
 
@@ -19,6 +21,41 @@ const siteVisitSchema = contactSchema.extend({
   preferredDate: z.string().optional(),
   preferredTime: z.string().optional(),
   roofType: z.string().optional()
+});
+
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
+
+router.post('/login', (req, res) => {
+  const schema = z.object({ 
+    email: z.string().email(), 
+    password: z.string(),
+    role: z.enum(['USER', 'ADMIN'])
+  });
+
+  try {
+    const { email, password, role } = schema.parse(req.body);
+    
+    const table = role === 'ADMIN' ? 'Admin' : 'User';
+    const user = db.prepare(`SELECT * FROM ${table} WHERE email = ?`).get(email) as any;
+    
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, role: user.role, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({ 
+      success: true, 
+      token, 
+      user: { id: user.id, name: user.name, email: user.email, role: user.role } 
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: 'Invalid request data' });
+  }
 });
 
 router.post('/contact', (req, res) => {

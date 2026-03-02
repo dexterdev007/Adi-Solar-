@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
-interface AdminUser {
+interface AppUser {
   id: string;
   name: string;
   email: string;
@@ -11,9 +11,9 @@ interface AdminUser {
 }
 
 interface AuthContextType {
-  admin: AdminUser | null;
+  user: AppUser | null;
   token: string | null;
-  login: (token: string, admin: AdminUser) => void;
+  login: (token: string, user: AppUser) => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -21,54 +21,66 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [admin, setAdmin] = useState<AdminUser | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Check local storage on mount
-    const storedToken = localStorage.getItem('admin_token');
-    const storedAdmin = localStorage.getItem('admin_user');
+    const storedToken = localStorage.getItem('auth_token');
+    const storedUser = localStorage.getItem('auth_user');
 
-    if (storedToken && storedAdmin) {
+    if (storedToken && storedUser) {
       setToken(storedToken);
-      setAdmin(JSON.parse(storedAdmin));
+      setUser(JSON.parse(storedUser));
     }
     
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    // Protect admin routes
     if (!isLoading) {
-      if (pathname.startsWith('/admin') && pathname !== '/admin/login' && !token) {
-        router.push('/admin/login');
-      } else if (pathname === '/admin/login' && token) {
-        router.push('/admin');
+      const isLoginRoute = pathname === '/login';
+      const isAdminRoute = pathname.startsWith('/admin');
+      const isDashboardRoute = pathname.startsWith('/dashboard');
+
+      if (!token) {
+        if (isAdminRoute || isDashboardRoute) {
+          router.push('/login');
+        }
+      } else {
+        // Logged in
+        if (isLoginRoute) {
+          router.push(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard');
+        } else if (isAdminRoute && user?.role !== 'ADMIN' && user?.role !== 'SUPER_ADMIN') {
+          router.push('/dashboard');
+        } else if (isDashboardRoute && user?.role === 'ADMIN') {
+          // Optional: redirect admin away from user dashboard, or let them view it.
+          // router.push('/admin'); 
+        }
       }
     }
-  }, [pathname, token, isLoading, router]);
+  }, [pathname, token, isLoading, user, router]);
 
-  const login = (newToken: string, newAdmin: AdminUser) => {
-    localStorage.setItem('admin_token', newToken);
-    localStorage.setItem('admin_user', JSON.stringify(newAdmin));
+  const login = (newToken: string, newUser: AppUser) => {
+    localStorage.setItem('auth_token', newToken);
+    localStorage.setItem('auth_user', JSON.stringify(newUser));
     setToken(newToken);
-    setAdmin(newAdmin);
-    router.push('/admin');
+    setUser(newUser);
+    router.push(newUser.role === 'ADMIN' || newUser.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard');
   };
 
   const logout = () => {
-    localStorage.removeItem('admin_token');
-    localStorage.removeItem('admin_user');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
     setToken(null);
-    setAdmin(null);
-    router.push('/admin/login');
+    setUser(null);
+    router.push('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ admin, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import SiteVisitModal from '../SiteVisitModal'
 
 const TOTAL_FRAMES = 240
@@ -260,12 +261,17 @@ export default function HeroSection() {
             </svg>
             Get Free Site Visit
           </button>
-          <button
-            onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
-            className="btn-outline-white text-base px-8 py-4"
+          <Link
+            href="/login"
+            className="btn-outline-white flex items-center gap-2 text-base px-8 py-4"
           >
-            Learn More
-          </button>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+              <polyline points="10 17 15 12 10 7"/>
+              <line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+            Login
+          </Link>
         </div>
 
       </div>

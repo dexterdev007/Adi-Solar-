@@ -84,6 +84,12 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
+            <Link 
+              href="/login" 
+              className={`font-bold text-sm px-4 py-2 transition-colors ${scrolled ? 'text-gray-800 dark:text-gray-200 hover:text-solar-yellow' : 'text-white/90 hover:text-white'}`}
+            >
+              Login
+            </Link>
             <button
               onClick={() => handleNavClick('#contact')}
               className="btn-primary text-xs px-5 py-2.5"
@@ -122,9 +128,16 @@ export default function Navbar() {
             </button>
           ))}
           <div className="mt-2 pt-2 border-t border-gray-100 dark:border-charcoal-muted">
+            <Link
+              href="/login"
+              onClick={() => setMobileOpen(false)}
+              className="block text-center text-sm font-bold text-gray-800 dark:text-gray-200 py-3 mb-2 hover:text-solar-yellow transition-colors"
+            >
+              Login
+            </Link>
             <button
               onClick={() => handleNavClick('#contact')}
-              className="btn-primary w-full mt-2"
+              className="btn-primary w-full"
             >
               Get Free Site Visit
             </button>
