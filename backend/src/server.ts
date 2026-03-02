@@ -8,9 +8,6 @@ import { adminRoutes } from './routes/admin.routes';
 
 dotenv.config();
 
-// Initialize the Database (create tables + seed default admin)
-initDb();
-
 const app = express();
 const PORT = process.env.PORT || 5001;
 
@@ -28,6 +25,14 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Initialize DB then start server
+initDb()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to initialize database:', err);
+    process.exit(1);
+  });

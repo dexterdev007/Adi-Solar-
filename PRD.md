@@ -24,7 +24,7 @@
 ### 3.2. Backend
 
 - **Environment:** Node.js with Express
-- **Database:** SQLite (via Prisma ORM)
+- **Database:** PostgreSQL (via `pg` driver, with Prisma schema for reference)
 - **Language:** TypeScript
 - **Features:** RESTful API endpoints for handling Leads, Site Visits, Admin Auth, and Analytics.
 
@@ -32,7 +32,7 @@
 
 ## 4. System Architecture & Models (Database Schema)
 
-The system leverages a relational model via Prisma (`schema.prisma`) targeting an SQLite database for simple, file-based persistence:
+The system leverages a relational model using PostgreSQL for robust, production-grade persistence. The schema is defined in both `backend/src/db.ts` (runtime) and `backend/prisma/schema.prisma` (reference). Database setup scripts live in the `database/` folder:
 
 1. **Admin:** Manages access to the internal dashboard. (Fields: id, name, email, password, role, created_at).
 2. **Lead:** Stores user inquiries. (Fields: id, name, phone, email, property_type, location, message, source, status, notes). Status flows typically from 'NEW' to 'CONVERTED' or 'REJECTED'.
@@ -75,6 +75,6 @@ The system leverages a relational model via Prisma (`schema.prisma`) targeting a
 ## 7. Future Phases / Roadmap
 
 - **Unified Auth System:** Completing a dual role-based login for standard Users vs. Admins.
-- **Database Migration:** Upgrading from local SQLite to PostgreSQL (e.g., Supabase, Vercel Postgres, AWS RDS) for production scale.
+- **Managed PostgreSQL:** Migrating to a managed PostgreSQL service (e.g., Supabase, Vercel Postgres, AWS RDS) for production hosting.
 - **Email/SMS Automation:** Integrating services like SendGrid or Twilio to automatically send confirmation messages when a new lead is generated.
 - **Content Management System (CMS):** Allowing non-technical staff to update the "Services", "Process", and "Stats" dynamically without touching the frontend code.

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db } from '../db';
+import { pool } from '../db';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
@@ -25,7 +25,7 @@ const siteVisitSchema = contactSchema.extend({
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const schema = z.object({ 
     email: z.string().email(), 
     password: z.string(),
@@ -36,7 +36,8 @@ router.post('/login', (req, res) => {
     const { email, password, role } = schema.parse(req.body);
     
     const table = role === 'ADMIN' ? 'Admin' : 'User';
-    const user = db.prepare(`SELECT * FROM ${table} WHERE email = ?`).get(email) as any;
+    const result = await pool.query(`SELECT * FROM "${table}" WHERE email = $1`, [email]);
+    const user = result.rows[0];
     
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
@@ -58,15 +59,16 @@ router.post('/login', (req, res) => {
   }
 });
 
-router.post('/contact', (req, res) => {
+router.post('/contact', async (req, res) => {
   try {
     const data = contactSchema.parse(req.body);
     const id = uuidv4();
     
-    db.prepare(`
-      INSERT INTO Lead (id, name, phone, email, property_type, location, message, source)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(id, data.name, data.phone, data.email || null, data.property_type || null, data.location || null, data.message || null, data.source);
+    await pool.query(
+      `INSERT INTO "Lead" (id, name, phone, email, property_type, location, message, source)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [id, data.name, data.phone, data.email || null, data.property_type || null, data.location || null, data.message || null, data.source]
+    );
     
     res.status(201).json({ success: true, message: 'Contact request received successfully.', id });
   } catch (error) {
@@ -75,23 +77,25 @@ router.post('/contact', (req, res) => {
   }
 });
 
-router.post('/site-visit', (req, res) => {
+router.post('/site-visit', async (req, res) => {
   try {
     const data = siteVisitSchema.parse(req.body);
     const leadId = uuidv4();
     
     // 1. Create Lead first
-    db.prepare(`
-      INSERT INTO Lead (id, name, phone, email, property_type, location, source)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).run(leadId, data.name, data.phone, data.email || null, data.property_type || null, data.location || null, 'hero_cta_visit');
+    await pool.query(
+      `INSERT INTO "Lead" (id, name, phone, email, property_type, location, source)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [leadId, data.name, data.phone, data.email || null, data.property_type || null, data.location || null, 'hero_cta_visit']
+    );
     
     // 2. Create Site Visit entry linking to the Lead
     const visitId = uuidv4();
-    db.prepare(`
-      INSERT INTO SiteVisit (id, lead_id, preferred_date, preferred_time, roof_type)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(visitId, leadId, data.preferredDate || null, data.preferredTime || null, data.roofType || null);
+    await pool.query(
+      `INSERT INTO "SiteVisit" (id, lead_id, preferred_date, preferred_time, roof_type)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [visitId, leadId, data.preferredDate || null, data.preferredTime || null, data.roofType || null]
+    );
     
     res.status(201).json({ success: true, message: 'Site visit scheduled successfully.' });
   } catch (error) {
@@ -100,14 +104,15 @@ router.post('/site-visit', (req, res) => {
   }
 });
 
-router.post('/track', (req, res) => {
+router.post('/track', async (req, res) => {
   try {
     const id = uuidv4();
     const { page, action, deviceType, ipAddress } = req.body;
-    db.prepare(`
-      INSERT INTO Analytics (id, page, action, device_type, ip_address)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(id, page, action, deviceType || null, ipAddress || null);
+    await pool.query(
+      `INSERT INTO "Analytics" (id, page, action, device_type, ip_address)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [id, page, action, deviceType || null, ipAddress || null]
+    );
     res.status(200).json({ success: true });
   } catch (error) {
     // Tracking errors shouldn't break UI flows
