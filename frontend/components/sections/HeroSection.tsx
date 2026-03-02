@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import SiteVisitModal from '../SiteVisitModal'
 
 const TOTAL_FRAMES = 240
 const FRAME_PATH = (i: number) =>
@@ -16,7 +15,6 @@ export default function HeroSection() {
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const floatingCtaRef = useRef<HTMLDivElement>(null)
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -188,7 +186,11 @@ export default function HeroSection() {
   }, [])
 
   const scrollToContact = () => {
-    setIsModalOpen(true);
+    const target = document.querySelector('#contact')
+    if (target) {
+      const y = target.getBoundingClientRect().top + window.scrollY - 72
+      window.scrollTo({ top: y, behavior: 'smooth' })
+    }
   }
 
   return (
@@ -252,9 +254,9 @@ export default function HeroSection() {
         {/* CTA */}
         <div
           ref={ctaRef}
-          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full px-6 sm:px-0 max-w-sm sm:max-w-none mx-auto pointer-events-auto"
         >
-          <button onClick={scrollToContact} className="btn-primary text-base px-8 py-4">
+          <button onClick={scrollToContact} className="btn-primary w-full sm:w-auto text-base px-8 py-4 flex items-center justify-center gap-2">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
@@ -263,7 +265,7 @@ export default function HeroSection() {
           </button>
           <Link
             href="/login"
-            className="btn-outline-white flex items-center gap-2 text-base px-8 py-4"
+            className="btn-outline-white w-full sm:w-auto text-base px-8 py-4 flex items-center justify-center gap-2"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
@@ -324,7 +326,6 @@ export default function HeroSection() {
         </svg>
       </div>
 
-      <SiteVisitModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   )
 }
