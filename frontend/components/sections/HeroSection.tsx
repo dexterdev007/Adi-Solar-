@@ -288,13 +288,7 @@ export default function HeroSection() {
           style={{ opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s ease' }}
         >
           <div 
-            className="animate-breath-cta flex flex-col items-center justify-center p-6 rounded-md cursor-pointer transition-all duration-300 hover:scale-[1.05] hover:shadow-2xl"
-            style={{
-              background: 'rgba(255,255,255,0.75)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-            }}
+            className="animate-breath-cta flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-[1.05]"
             onClick={scrollToContact}
           >
             <img src={`${basePath}/cta-image.png`} alt="Book Consultation" className="w-32 md:w-40 h-auto object-contain mb-4 drop-shadow-sm mix-blend-multiply" />
