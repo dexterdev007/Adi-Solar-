@@ -18,11 +18,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true)
-    const stored = localStorage.getItem('adi-solar-theme') as Theme | null
+    const stored = localStorage.getItem('adi-solar-theme-v2') as Theme | null
     if (stored) {
       setTheme(stored)
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark')
+    } else {
+      setTheme('light')
     }
   }, [])
 
@@ -34,7 +34,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       root.classList.remove('dark')
     }
-    localStorage.setItem('adi-solar-theme', theme)
+    localStorage.setItem('adi-solar-theme-v2', theme)
   }, [theme, mounted])
 
   const toggleTheme = () => {

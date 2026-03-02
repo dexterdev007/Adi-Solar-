@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+
 const TOTAL_FRAMES = 240
 const FRAME_PATH = (i: number) =>
-  `/landing page final frames/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
+  `${basePath}/landing page final frames/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
 
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -286,7 +288,7 @@ export default function HeroSection() {
           style={{ opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s ease' }}
         >
           <div 
-            className="animate-breath-cta flex flex-col items-center justify-center p-6 rounded-[14px] cursor-pointer transition-all duration-300 hover:scale-[1.05] hover:shadow-2xl"
+            className="animate-breath-cta flex flex-col items-center justify-center p-6 rounded-md cursor-pointer transition-all duration-300 hover:scale-[1.05] hover:shadow-2xl"
             style={{
               background: 'rgba(255,255,255,0.75)',
               backdropFilter: 'blur(8px)',
@@ -295,8 +297,8 @@ export default function HeroSection() {
             }}
             onClick={scrollToContact}
           >
-            <img src="/cta-image.png" alt="Book Consultation" className="w-32 md:w-40 h-auto object-contain mb-4 drop-shadow-sm mix-blend-multiply" />
-            <div className="bg-solar-yellow text-white font-bold tracking-wide text-sm md:text-base px-6 py-2.5 rounded-full shadow-md whitespace-nowrap">
+            <img src={`${basePath}/cta-image.png`} alt="Book Consultation" className="w-32 md:w-40 h-auto object-contain mb-4 drop-shadow-sm mix-blend-multiply" />
+            <div className="bg-solar-yellow text-white font-bold tracking-wide text-sm md:text-base px-6 py-2.5 rounded-md shadow-md whitespace-nowrap">
               Book Free Consultation
             </div>
           </div>
