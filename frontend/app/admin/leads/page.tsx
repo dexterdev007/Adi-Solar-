@@ -35,7 +35,7 @@ export default function LeadsManager() {
 
   const fetchLeads = async () => {
     try {
-      const res = await fetch('http://localhost:5001/api/admin/leads', {
+      const res = await fetch('/api/admin/leads', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const json = await res.json();
@@ -53,7 +53,7 @@ export default function LeadsManager() {
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
-      await fetch(`http://localhost:5001/api/admin/leads/${id}/status`, {
+      await fetch(`/api/admin/leads/${id}/status`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export default function LeadsManager() {
 
   const updateNotes = async (id: string, notes: string) => {
     try {
-      await fetch(`http://localhost:5001/api/admin/leads/${id}/notes`, {
+      await fetch(`/api/admin/leads/${id}/notes`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',

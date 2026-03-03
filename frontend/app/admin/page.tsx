@@ -12,7 +12,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchOverview = async () => {
       try {
-        const res = await fetch('http://localhost:5001/api/admin/analytics/overview', {
+        const res = await fetch('/api/admin/analytics/overview', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const json = await res.json();

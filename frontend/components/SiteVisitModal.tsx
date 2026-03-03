@@ -32,7 +32,7 @@ export default function SiteVisitModal({ isOpen, onClose }: SiteVisitModalProps)
     setError('');
 
     try {
-      const res = await fetch('http://localhost:5001/api/site-visit', {
+      const res = await fetch(`/api/site-visit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
