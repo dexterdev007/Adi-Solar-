@@ -41,25 +41,31 @@ export default function ContactSection() {
     setError('')
     
     try {
-      // Create FormData to send to Google Apps Script
-      const submitData = new FormData();
-      submitData.append('name', formData.name);
-      submitData.append('phone', formData.phone);
-      submitData.append('email', formData.email);
-      submitData.append('service', formData.service);
-      submitData.append('message', formData.message);
-      submitData.append('source', 'contact_form');
+      // Web3Forms - free service for static sites, full CORS support, delivers to email
+      // Get your own free access key at: https://web3forms.com/
+      const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '5b4cc7c5-8b4e-4c76-a6b8-6f7f2e4b5c8d';
 
-      const GOOGLE_WEBHOOK_URL = process.env.NEXT_PUBLIC_GOOGLE_WEBHOOK_URL || 'https://script.google.com/macros/s/AKfycbxYQK-J4kNp-QI0uCMda_7Js5mJBMzL06JS6MOdVb3IfKyEt2gsZCaLByDXCdNYDj8/exec';
-      
-      await fetch(GOOGLE_WEBHOOK_URL, {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        body: submitData,
-        mode: 'no-cors', // Required for cross-origin requests to Google Apps Script from static hosts (GitHub Pages etc.)
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: `New Solar Enquiry from ${formData.name}`,
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email || 'Not provided',
+          service: formData.service || 'Not specified',
+          message: formData.message || 'No message',
+          source: 'Adi Solar Contact Form',
+        }),
       });
 
-      // With no-cors the response is opaque, so we treat any non-thrown fetch as success
-      setSubmitted(true)
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
     } catch (err: any) {
       console.error(err);
       setError('An error occurred. Please try calling us directly.')
