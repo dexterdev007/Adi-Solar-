@@ -44,7 +44,8 @@ export default function SiteVisitModal({ isOpen, onClose }: SiteVisitModalProps)
       
       const res = await fetch(GOOGLE_WEBHOOK_URL, {
         method: 'POST',
-        body: submitData
+        body: submitData,
+        mode: 'no-cors',
       });
 
       // Assuming the Google Webhook always returns a successful response for a valid POST
