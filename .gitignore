@@ -33,6 +33,7 @@ yarn-error.log*
 # database
 *.db
 *.sqlite
+backend/pglite_db/
 
 # env
 backend/.env

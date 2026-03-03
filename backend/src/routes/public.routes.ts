@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
     
     const table = role === 'ADMIN' ? 'Admin' : 'User';
     const result = await pool.query(`SELECT * FROM "${table}" WHERE email = $1`, [email]);
-    const user = result.rows[0];
+    const user = result.rows[0] as any;
     
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });

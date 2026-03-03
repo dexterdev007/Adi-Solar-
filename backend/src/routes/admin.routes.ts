@@ -64,9 +64,9 @@ router.get('/analytics/overview', requireAdmin, async (req: AdminRequest, res) =
     res.json({ 
       success: true, 
       overview: {
-        totalLeads: parseInt(totalLeadsResult.rows[0].count, 10),
-        newLeads: parseInt(newLeadsResult.rows[0].count, 10),
-        convertedLeads: parseInt(convertedLeadsResult.rows[0].count, 10)
+        totalLeads: parseInt((totalLeadsResult.rows as any)[0].count, 10),
+        newLeads: parseInt((newLeadsResult.rows as any)[0].count, 10),
+        convertedLeads: parseInt((convertedLeadsResult.rows as any)[0].count, 10)
       },
       topPages: pageViewsResult.rows
     });
