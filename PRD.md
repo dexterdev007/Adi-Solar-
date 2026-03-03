@@ -1,43 +1,40 @@
-# Product Requirements Document (PRD): Adi Solar Website & CRM
+# Final Product Requirements Document (PRD): Adi Solar Website & CRM
 
 ## 1. Project Overview
 
 **Name:** Adi Solar Project
-**Description:** A comprehensive web platform for "Adi Solar", a solar installation company in India. The application consists of a modern, responsive, and aesthetically premium landing page designed to generate leads, alongside a custom backend CRM to manage those leads, schedule site visits, and track essential admin analytics.
+**Description:** A comprehensive web platform for "Adi Solar", a solar installation company in India. The application consists of a modern, responsive, and aesthetically premium landing page designed to generate leads, which automatically syncs data to a Google Sheets backend acting as a simple and effective CRM.
 
 ## 2. Goals & Objectives
 
 - **Lead Generation:** Make it effortless for prospective customers (residential, commercial, industrial) to book a free site visit or consultation.
 - **Brand Authority:** Establish trust through a highly polished frontend combining sleek animations, modern aesthetics (Tailwind CSS), and light/dark theme support.
-- **Operational Efficiency:** Provide an Admin dashboard for the Adi Solar team to easily manage new inquiries and site visit schedules.
+- **Operational Efficiency:** Automatically capture all leads via a Google Apps Script Webhook directly into a Google Spreadsheet, eliminating the need for complex database management for the sales team.
 
 ## 3. Technology Stack
 
-### 3.1. Frontend
+### 3.1. Frontend & Deployment
 
-- **Framework:** Next.js 14 (App Router)
+- **Framework:** Next.js 14 (App Router configured for Static HTML Export)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS (v3) with Custom Configuration (e.g., custom colors like `solar-yellow`, custom animations, and a glassmorphism/premium aesthetic)
-- **Animations:** HTML5 Canvas (for Hero animation frames), CSS Keyframes, Framer Motion
-- **Features:** React Context for Theme Management and Admin Authentication
+- **Features:** React Context for Theme Management
+- **Hosting:** GitHub Pages (served from the `gh-pages` branch)
 
-### 3.2. Backend
+### 3.2. Backend & Data Storage
 
-- **Environment:** Node.js with Express
-- **Database:** PostgreSQL (via `pg` driver, with Prisma schema for reference)
-- **Language:** TypeScript
-- **Features:** RESTful API endpoints for handling Leads, Site Visits, Admin Auth, and Analytics.
+- **Integration:** Google Apps Script Webhook (No-CORS fetch policy)
+- **Database / CRM:** Google Sheets
 
 ---
 
-## 4. System Architecture & Models (Database Schema)
+## 4. System Architecture
 
-The system leverages a relational model using PostgreSQL for robust, production-grade persistence. The schema is defined in both `backend/src/db.ts` (runtime) and `backend/prisma/schema.prisma` (reference). Database setup scripts live in the `database/` folder:
+The system utilizes a serverless static frontend that communicates directly with a deployed Google Apps Script URL.
 
-1. **Admin:** Manages access to the internal dashboard. (Fields: id, name, email, password, role, created_at).
-2. **Lead:** Stores user inquiries. (Fields: id, name, phone, email, property_type, location, message, source, status, notes). Status flows typically from 'NEW' to 'CONVERTED' or 'REJECTED'.
-3. **SiteVisit:** Tracks specific requested site visits tied to a Lead. (Fields: id, lead_id, preferred_date, preferred_time, roof_type).
-4. **Analytics:** Basic tracking for page views, button clicks, and interactions. (Fields: id, page, action, device_type, ip_address).
+1. **Frontend Client:** Hosted on GitHub Pages, the user submits the Contact Form or Site Visit Modal.
+2. **Fetch Request:** A `FormData` POST request is sent using `mode: 'no-cors'` to avoid browser cross-origin blocking.
+3. **Google Webhook:** The Apps Script receives the payload, parses it, appends a new row to the designated Google Sheet, and returns an opaque response safely handled by the client.
 
 ---
 
@@ -52,17 +49,9 @@ The system leverages a relational model using PostgreSQL for robust, production-
 - **WhatsApp Integration:** A globally floating WhatsApp button for instant messaging to the sales team.
 - **Theme Toggling:** Support for Light Mode / Dark Mode ("Charcoal" theme) persisting across user sessions via local storage.
 
-### 5.2. Backend APIs
+### 5.2. Data Capture (Forms)
 
-- **POST `/api/site-visit` or `/api/leads`:** Endpoint to safely capture information from the frontend and store it in the Lead and SiteVisit database tables.
-- **Auth Endpoints:** JWT-based or Session-based login for administrative users matching the `Admin` table.
-- **GET/PUT `/api/leads`:** Admin functions to fetch incoming leads, update their `status`, and write CRM `notes`.
-
-### 5.3. Admin Panel (CRM)
-
-- **Secure Access:** A protected `/login` and `/admin` route within the Next.js app, relying on the AuthProvider context.
-- **Lead Dashboard:** A view where admins can inspect incoming entries, filter by status ('NEW', 'CONTACTED', 'SITE_VISIT_SCHEDULED'), and track conversions.
-- **Analytics View:** Visualization of tracked interactions logged throughout the website's lifecycle.
+- **Graceful Error Handling:** Because the Google Script returns an opaque response, the fetch logic correctly intercepts the resulting `TypeError: Failed to fetch` as a successful submission indicator and displays a "Request Received!" message to the user.
 
 ---
 
@@ -74,7 +63,6 @@ The system leverages a relational model using PostgreSQL for robust, production-
 
 ## 7. Future Phases / Roadmap
 
-- **Unified Auth System:** Completing a dual role-based login for standard Users vs. Admins.
-- **Managed PostgreSQL:** Migrating to a managed PostgreSQL service (e.g., Supabase, Vercel Postgres, AWS RDS) for production hosting.
-- **Email/SMS Automation:** Integrating services like SendGrid or Twilio to automatically send confirmation messages when a new lead is generated.
-- **Content Management System (CMS):** Allowing non-technical staff to update the "Services", "Process", and "Stats" dynamically without touching the frontend code.
+- **Custom Domain Deployment:** Moving from GitHub pages to a dedicated domain (e.g., `adisolar.com`).
+- **Unified Authentication & Custom CRM:** If Google Sheets becomes insufficient for lead volume, migrating to a custom Node.js/Express backend with PostgreSQL and dual-role Admin login dashboard.
+- **Email/SMS Automation:** Integrating services like SendGrid or Twilio via triggers in Google Sheets to automatically send confirmation messages when a new lead is generated.
