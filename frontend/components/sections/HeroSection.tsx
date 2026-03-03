@@ -61,8 +61,6 @@ export default function HeroSection() {
     }
 
     let currentFrame = 0
-    let rafId: number | null = null
-    let isAnimating = false
 
     const updateOverlay = (progress: number) => {
       if (overlayRef.current) {
@@ -82,86 +80,35 @@ export default function HeroSection() {
       }
     }
 
-    const animateFrames = (forward: boolean) => {
-      if (isAnimating) return
-      isAnimating = true
-      
-      const target = forward ? TOTAL_FRAMES - 1 : 0
-      let lastTime: number | null = null
-      let exactFrameFloat = currentFrame
-
-      const loop = (time: number) => {
-        if (lastTime === null) lastTime = time
-        const dt = time - lastTime
-        lastTime = time
-
-        const framesToAdvance = dt / (1000 / 60)
-
-        if (forward) {
-          exactFrameFloat += framesToAdvance
-          if (exactFrameFloat >= target) exactFrameFloat = target
-        } else {
-          exactFrameFloat -= framesToAdvance
-          if (exactFrameFloat <= target) exactFrameFloat = target
-        }
-
-        currentFrame = Math.round(exactFrameFloat)
-        drawFrame(currentFrame)
-        updateOverlay(currentFrame / (TOTAL_FRAMES - 1))
-
-        if ((forward && exactFrameFloat < target) || (!forward && exactFrameFloat > target)) {
-          rafId = requestAnimationFrame(loop)
-        } else {
-          isAnimating = false
-          rafId = null
-          
-          if (container) {
-            const heroTop = container.offsetTop
-            const heroBottom = heroTop + container.offsetHeight - window.innerHeight
-            
-            if (forward) {
-              if (window.scrollY < heroBottom) {
-                window.scrollTo({ top: heroBottom, behavior: 'auto' })
-              }
-            } else {
-              if (window.scrollY > heroTop) {
-                window.scrollTo({ top: heroTop, behavior: 'auto' })
-              }
-            }
-          }
-        }
-      }
-
-      rafId = requestAnimationFrame(loop)
-    }
-
-    const handleWheel = (e: WheelEvent) => {
+    const handleScroll = () => {
       const heroTop = container.offsetTop
       const heroBottom = heroTop + container.offsetHeight - window.innerHeight
-      const inHero = window.scrollY >= heroTop && window.scrollY <= heroBottom + 5
-      
-      if (isAnimating) {
-        if (inHero && e.cancelable) e.preventDefault()
-        return
-      }
-      
-      const threshold = 10
-      if (Math.abs(e.deltaY) > threshold && inHero) {
-        if (e.deltaY > 0) {
-          if (currentFrame < TOTAL_FRAMES - 1) {
-            if (e.cancelable) e.preventDefault()
-            animateFrames(true)
-          }
-        } else {
-          if (currentFrame > 0 && window.scrollY <= heroBottom) {
-            if (e.cancelable) e.preventDefault()
-            animateFrames(false)
-          }
+      const scrollY = window.scrollY
+
+      if (scrollY >= heroTop && scrollY <= heroBottom) {
+        // We are inside the sticky Hero Section
+        const progress = (scrollY - heroTop) / (heroBottom - heroTop)
+        const targetFrame = Math.round(progress * (TOTAL_FRAMES - 1))
+        
+        if (targetFrame !== currentFrame) {
+          currentFrame = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetFrame))
+          drawFrame(currentFrame)
+          updateOverlay(progress)
         }
+      } else if (scrollY > heroBottom && currentFrame !== TOTAL_FRAMES - 1) {
+        // Scrolled past
+        currentFrame = TOTAL_FRAMES - 1
+        drawFrame(currentFrame)
+        updateOverlay(1)
+      } else if (scrollY < heroTop && currentFrame !== 0) {
+        // Scrolled above
+        currentFrame = 0
+        drawFrame(currentFrame)
+        updateOverlay(0)
       }
     }
 
-    window.addEventListener('wheel', handleWheel, { passive: false })
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     // Load all frames; draw frame 0 as soon as it loads
     for (let i = 0; i < TOTAL_FRAMES; i++) {
@@ -182,8 +129,7 @@ export default function HeroSection() {
 
     return () => {
       window.removeEventListener('resize', sizeCanvas)
-      window.removeEventListener('wheel', handleWheel)
-      if (rafId !== null) cancelAnimationFrame(rafId)
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
