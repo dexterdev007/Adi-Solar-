@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configured for Vercel deployment.
-  // Removed 'output: export' so we can use dynamic Next.js Serverless API routes.
-  // Removed github pages basePath as Vercel runs from root domain.
+  // Added output: 'export' to support building for GitHub Pages
+  output: 'export',
   images: {
     unoptimized: true,
   }
