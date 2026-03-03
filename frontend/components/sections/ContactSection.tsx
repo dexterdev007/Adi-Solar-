@@ -52,13 +52,13 @@ export default function ContactSection() {
 
       const GOOGLE_WEBHOOK_URL = process.env.NEXT_PUBLIC_GOOGLE_WEBHOOK_URL || 'https://script.google.com/macros/s/AKfycbxYQK-J4kNp-QI0uCMda_7Js5mJBMzL06JS6MOdVb3IfKyEt2gsZCaLByDXCdNYDj8/exec';
       
-      const res = await fetch(GOOGLE_WEBHOOK_URL, {
+      await fetch(GOOGLE_WEBHOOK_URL, {
         method: 'POST',
         body: submitData,
-        // mode: 'no-cors' // Use this if you encounter CORS issues, but it hides the response status
+        mode: 'no-cors', // Required for cross-origin requests to Google Apps Script from static hosts (GitHub Pages etc.)
       });
 
-      // Since Google Apps Script can sometimes return opaque responses, we simply check if it didn't throw a network error.
+      // With no-cors the response is opaque, so we treat any non-thrown fetch as success
       setSubmitted(true)
     } catch (err: any) {
       console.error(err);
