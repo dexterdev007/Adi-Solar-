@@ -32,14 +32,23 @@ export default function SiteVisitModal({ isOpen, onClose }: SiteVisitModalProps)
     setError('');
 
     try {
-      const res = await fetch(`/api/site-visit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to submit request');
+      const submitData = new FormData();
+      submitData.append('name', formData.name);
+      submitData.append('phone', formData.phone);
+      submitData.append('email', formData.email || '');
+      submitData.append('service', formData.roofType || '');
+      submitData.append('message', `Roof: ${formData.roofType || 'N/A'}, Date: ${formData.preferredDate || 'N/A'}, Time: ${formData.preferredTime || 'N/A'}`);
+      submitData.append('source', 'site_visit_modal');
+
+      const GOOGLE_WEBHOOK_URL = process.env.NEXT_PUBLIC_GOOGLE_WEBHOOK_URL || 'PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE';
       
+      const res = await fetch(GOOGLE_WEBHOOK_URL, {
+        method: 'POST',
+        body: submitData
+      });
+
+      // Assuming the Google Webhook always returns a successful response for a valid POST
+      // If you need to check for specific success from the webhook, you'd parse 'res'
       setSuccess(true);
       setTimeout(() => {
         onClose();

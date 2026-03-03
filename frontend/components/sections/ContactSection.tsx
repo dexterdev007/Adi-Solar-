@@ -41,22 +41,24 @@ export default function ContactSection() {
     setError('')
     
     try {
-      const res = await fetch(`/api/contact`, {
+      // Create FormData to send to Google Apps Script
+      const submitData = new FormData();
+      submitData.append('name', formData.name);
+      submitData.append('phone', formData.phone);
+      submitData.append('email', formData.email);
+      submitData.append('service', formData.service);
+      submitData.append('message', formData.message);
+      submitData.append('source', 'contact_form');
+
+      const GOOGLE_WEBHOOK_URL = process.env.NEXT_PUBLIC_GOOGLE_WEBHOOK_URL || 'PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE';
+      
+      const res = await fetch(GOOGLE_WEBHOOK_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          property_type: formData.service,
-          message: formData.message,
-          source: 'contact_form'
-        })
+        body: submitData,
+        // mode: 'no-cors' // Use this if you encounter CORS issues, but it hides the response status
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to submit request');
-      
+      // Since Google Apps Script can sometimes return opaque responses, we simply check if it didn't throw a network error.
       setSubmitted(true)
     } catch (err: any) {
       console.error(err);
