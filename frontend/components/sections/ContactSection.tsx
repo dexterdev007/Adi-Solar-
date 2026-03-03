@@ -50,7 +50,7 @@ export default function ContactSection() {
       submitData.append('message', formData.message);
       submitData.append('source', 'contact_form');
 
-      const GOOGLE_WEBHOOK_URL = process.env.NEXT_PUBLIC_GOOGLE_WEBHOOK_URL || 'PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE';
+      const GOOGLE_WEBHOOK_URL = process.env.NEXT_PUBLIC_GOOGLE_WEBHOOK_URL || 'https://script.google.com/macros/s/AKfycbxYQK-J4kNp-QI0uCMda_7Js5mJBMzL06JS6MOdVb3IfKyEt2gsZCaLByDXCdNYDj8/exec';
       
       const res = await fetch(GOOGLE_WEBHOOK_URL, {
         method: 'POST',

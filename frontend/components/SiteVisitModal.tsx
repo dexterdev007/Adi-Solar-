@@ -40,7 +40,7 @@ export default function SiteVisitModal({ isOpen, onClose }: SiteVisitModalProps)
       submitData.append('message', `Roof: ${formData.roofType || 'N/A'}, Date: ${formData.preferredDate || 'N/A'}, Time: ${formData.preferredTime || 'N/A'}`);
       submitData.append('source', 'site_visit_modal');
 
-      const GOOGLE_WEBHOOK_URL = process.env.NEXT_PUBLIC_GOOGLE_WEBHOOK_URL || 'PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE';
+      const GOOGLE_WEBHOOK_URL = process.env.NEXT_PUBLIC_GOOGLE_WEBHOOK_URL || 'https://script.google.com/macros/s/AKfycbxYQK-J4kNp-QI0uCMda_7Js5mJBMzL06JS6MOdVb3IfKyEt2gsZCaLByDXCdNYDj8/exec';
       
       const res = await fetch(GOOGLE_WEBHOOK_URL, {
         method: 'POST',
