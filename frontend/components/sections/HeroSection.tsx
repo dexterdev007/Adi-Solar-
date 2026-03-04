@@ -7,7 +7,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
 
 const TOTAL_FRAMES = 240
 const FRAME_PATH = (i: number) =>
-  `${basePath}/landing page final frames/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
+  `${basePath}/landing%20page%20final%20frames/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
 
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
