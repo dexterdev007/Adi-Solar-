@@ -16,14 +16,16 @@ export default function HeroSection() {
   const ctaRef = useRef<HTMLDivElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const floatingCtaRef = useRef<HTMLDivElement>(null)
-
+  const currentFrameRef = useRef(0)
+  const isPlayingRef = useRef(false)
+  const hasPlayedRef = useRef(false)
 
   useEffect(() => {
     const canvas = canvasRef.current
     const container = containerRef.current
     if (!canvas || !container) return
 
-    // Size canvas to CSS size (no DPR scaling — simpler and always works)
+    // Size canvas to CSS size
     const sizeCanvas = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
@@ -36,7 +38,6 @@ export default function HeroSection() {
 
     // Preload all frames
     const frames: HTMLImageElement[] = Array(TOTAL_FRAMES)
-    let loadedCount = 0
 
     const drawFrame = (index: number) => {
       const img = frames[index]
@@ -60,8 +61,6 @@ export default function HeroSection() {
       ctx.drawImage(img, dx, dy, dw, dh)
     }
 
-    let currentFrame = 0
-
     const updateOverlay = (progress: number) => {
       if (overlayRef.current) {
         const fadeOut = Math.max(0, Math.min(1, (progress - 0.15) / 0.20))
@@ -80,56 +79,97 @@ export default function HeroSection() {
       }
     }
 
-    const handleScroll = () => {
-      const heroTop = container.offsetTop
-      const heroBottom = heroTop + container.offsetHeight - window.innerHeight
-      const scrollY = window.scrollY
+    const playAnimation = () => {
+      isPlayingRef.current = true
+      document.body.style.overflow = 'hidden' // Lock scroll temporarily
 
-      if (scrollY >= heroTop && scrollY <= heroBottom) {
-        // We are inside the sticky Hero Section
-        const progress = (scrollY - heroTop) / (heroBottom - heroTop)
-        const targetFrame = Math.round(progress * (TOTAL_FRAMES - 1))
-        
-        if (targetFrame !== currentFrame) {
-          currentFrame = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetFrame))
-          drawFrame(currentFrame)
-          updateOverlay(progress)
+      let start: number | null = null
+      const DURATION = 3000 // Play animation over exactly 3 seconds
+
+      const loop = (time: number) => {
+        if (!start) start = time
+        const MathProgress = Math.min((time - start) / DURATION, 1)
+        const targetFrame = Math.round(MathProgress * (TOTAL_FRAMES - 1))
+
+        if (targetFrame !== currentFrameRef.current) {
+          currentFrameRef.current = targetFrame
+          drawFrame(targetFrame)
+          updateOverlay(MathProgress)
         }
-      } else if (scrollY > heroBottom && currentFrame !== TOTAL_FRAMES - 1) {
-        // Scrolled past
-        currentFrame = TOTAL_FRAMES - 1
-        drawFrame(currentFrame)
-        updateOverlay(1)
-      } else if (scrollY < heroTop && currentFrame !== 0) {
-        // Scrolled above
-        currentFrame = 0
-        drawFrame(currentFrame)
-        updateOverlay(0)
+
+        if (MathProgress < 1) {
+          requestAnimationFrame(loop)
+        } else {
+          isPlayingRef.current = false
+          hasPlayedRef.current = true
+          document.body.style.overflow = '' // Restore scroll
+        }
+      }
+
+      requestAnimationFrame(loop)
+    }
+
+    const resetAnimation = () => {
+      currentFrameRef.current = 0
+      hasPlayedRef.current = false
+      drawFrame(0)
+      updateOverlay(0)
+    }
+
+    const handleWheel = (e: WheelEvent) => {
+      // Only detect scrolling down
+      if (e.deltaY <= 0) return
+
+      if (window.scrollY <= 0) {
+        if (!hasPlayedRef.current && !isPlayingRef.current) {
+          e.preventDefault()
+          playAnimation()
+        } else if (isPlayingRef.current) {
+          // If already playing and still at top, absorb the scroll
+          e.preventDefault()
+        }
       }
     }
 
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      
+      // If user scrolls up and reaches the top after playing, instantly reset
+      if (scrollY <= 0 && hasPlayedRef.current && !isPlayingRef.current) {
+        resetAnimation()
+      }
+
+      // Fallback: trigger animation and lock position if they bypass wheel (e.g. scrollbar drag)
+      if (scrollY > 0 && !hasPlayedRef.current && !isPlayingRef.current) {
+        window.scrollTo(0, 0) 
+        playAnimation()
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false })
     window.addEventListener('scroll', handleScroll, { passive: true })
 
-    // Load all frames; draw frame 0 as soon as it loads
+    // Load frames and render immediately
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image()
       img.onload = () => {
         frames[i] = img
-        loadedCount++
-        if (i === 0) drawFrame(0)
-        // Re-draw if this is the currently displayed frame
-        if (i === currentFrame) drawFrame(i)
+        if (i === 0 && currentFrameRef.current === 0) drawFrame(0)
+        // Redraw if loading frame mid-play matches current target
+        if (i === currentFrameRef.current) drawFrame(i)
       }
       img.src = FRAME_PATH(i)
       frames[i] = img
     }
 
-    // Run once to initialize
+    // Initial state
     updateOverlay(0)
 
     return () => {
       window.removeEventListener('resize', sizeCanvas)
+      window.removeEventListener('wheel', handleWheel)
       window.removeEventListener('scroll', handleScroll)
+      document.body.style.overflow = ''
     }
   }, [])
 
