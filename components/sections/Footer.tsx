@@ -6,6 +6,7 @@ const QUICK_LINKS = [
   { label: "About Us", href: "/about" },
   { label: "All About Solar", href: "/all-about-solar" },
   { label: "Solar Calculator", href: "/solar-calculator" },
+  { label: "Blog", href: "/blog" },
   { label: "Get Solar", href: "/get-solar" },
 ];
 
@@ -23,7 +24,7 @@ export function Footer() {
   return (
     <footer className="bg-surface-dark text-white/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
 
           {/* Col 1: Logo + Tagline */}
           <div className="lg:col-span-1 flex flex-col gap-4">
@@ -120,6 +121,104 @@ export function Footer() {
                   aria-hidden="true"
                 />
                 New Delhi (Pan India Service)
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 5: Cities We Serve */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-white font-heading font-semibold text-sm uppercase tracking-widest">
+              Cities We Serve
+            </h3>
+            <div className="flex flex-col gap-3 text-sm">
+              <div>
+                <p className="text-white/40 text-xs mb-1">North</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Dehradun", "Lucknow", "Gorakhpur", "Varanasi"].map((city) => (
+                    <a
+                      key={city}
+                      href={`/solar-installation-${city.toLowerCase()}`}
+                      className="text-white/60 hover:text-accent text-xs transition-colors"
+                    >
+                      {city}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-white/40 text-xs mb-1">East</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Begusarai", "Bhagalpur", "Ranchi", "Bhubaneswar"].map((city) => (
+                    <a
+                      key={city}
+                      href={`/solar-installation-${city.toLowerCase()}`}
+                      className="text-white/60 hover:text-accent text-xs transition-colors"
+                    >
+                      {city}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-white/40 text-xs mb-1">Northeast</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Guwahati", "Silchar", "Tinsukia"].map((city) => (
+                    <a
+                      key={city}
+                      href={`/solar-installation-${city.toLowerCase()}`}
+                      className="text-white/60 hover:text-accent text-xs transition-colors"
+                    >
+                      {city}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-white/40 text-xs mb-1">West</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Ahmedabad"].map((city) => (
+                    <a
+                      key={city}
+                      href={`/solar-installation-${city.toLowerCase()}`}
+                      className="text-white/60 hover:text-accent text-xs transition-colors"
+                    >
+                      {city}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Col 6: From the Blog */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-white font-heading font-semibold text-sm uppercase tracking-widest">
+              From the Blog
+            </h3>
+            <ul className="flex flex-col gap-2" role="list">
+              <li>
+                <a
+                  href="/blog/solar-panel-cost-india-2026"
+                  className="text-white/60 hover:text-accent text-sm transition-colors line-clamp-2"
+                >
+                  Solar Panel Cost 2026
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/blog/pm-surya-ghar-subsidy-guide"
+                  className="text-white/60 hover:text-accent text-sm transition-colors line-clamp-2"
+                >
+                  PM Surya Ghar Guide
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/blog/solar-installation-process-india"
+                  className="text-white/60 hover:text-accent text-sm transition-colors line-clamp-2"
+                >
+                  Installation Process
+                </a>
               </li>
             </ul>
           </div>

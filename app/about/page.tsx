@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 
 import { motion } from "framer-motion";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -82,7 +83,7 @@ export default function AboutPage() {
               <div className="rounded-none bg-surface aspect-[4/3] relative flex items-center justify-center border border-border overflow-hidden group">
                  <Image 
                    src="/assets/about-placeholder.jpg" 
-                   alt="AdiSolar Team on site" 
+                   alt="AdiSolar engineer conducting free solar site visit assessment for a homeowner"
                    fill 
                    className="object-cover group-hover:scale-105 transition-transform duration-500" 
                  />
@@ -130,6 +131,7 @@ export default function AboutPage() {
               <SectionHeader
                 caption="Our Technology"
                 heading="Premium Equipment, Proven Performance"
+                subtext={<>We work with the best solar hardware available in India. <Link href="/all-about-solar" className="text-primary underline underline-offset-2 hover:text-primary-light transition-colors">Learn how it all works</Link> — from panels to inverters to monitoring.</>}
                 className="mb-12"
               />
             </RevealWrapper>
@@ -187,6 +189,20 @@ export default function AboutPage() {
                  </RevealWrapper>
                ))}
             </StaggerContainer>
+          </div>
+        </section>
+
+        {/* CTA Strip */}
+        <section className="py-16 bg-primary">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl font-bold font-heading text-white mb-4">Ready to go solar?</h2>
+            <p className="text-white/80 text-lg mb-8">Join 500+ happy customers across India. Book a free, no-obligation site visit today.</p>
+            <Link
+              href="/get-solar"
+              className="inline-block bg-accent text-white font-bold px-10 py-4 text-lg hover:bg-accent/90 transition-colors"
+            >
+              Book Your Free Site Visit
+            </Link>
           </div>
         </section>
 

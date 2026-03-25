@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -24,6 +25,47 @@ import { TypeReveal } from "@/components/ui/TypeReveal";
 import { WordFade } from "@/components/ui/WordFade";
 import { BlurReveal } from "@/components/ui/BlurReveal";
 import { ScrollHighlight } from "@/components/ui/ScrollHighlight";
+import { SchemaMarkup } from "@/components/seo/SchemaMarkup";
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How Solar Energy Works",
+  description:
+    "Step-by-step explanation of how solar panels convert sunlight into electricity",
+  step: [
+    {
+      "@type": "HowToStep",
+      position: 1,
+      name: "Sunlight Hits Your Panels",
+      text: "Photovoltaic cells absorb sunlight and convert it into DC electricity.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 2,
+      name: "DC Converts to AC",
+      text: "An inverter converts DC to AC electricity used by all home appliances.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 3,
+      name: "Powers Your Home",
+      text: "AC electricity flows into your switchboard and powers your appliances directly.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 4,
+      name: "Surplus Goes to the Grid",
+      text: "Excess electricity is sent to the grid via net metering, earning bill credits.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 5,
+      name: "You Save on Every Bill",
+      text: "You pay only for net grid consumption. Most customers save 60–90% from day one.",
+    },
+  ],
+};
 
 export default function AllAboutSolarPage() {
   const lineVariants = {
@@ -36,6 +78,7 @@ export default function AllAboutSolarPage() {
 
   return (
     <PageTransition>
+      <SchemaMarkup schema={howToSchema} />
       <main className="pt-16 lg:pt-20 overflow-hidden">
         {/* 1. PageHero - Refined centered layout */}
         <motion.section 
@@ -112,7 +155,7 @@ export default function AllAboutSolarPage() {
                     src="/assets/solar/rooftop-tech.png"
                     width={600}
                     height={600}
-                    alt="Cross-section of a Silicon Solar Cell"
+                    alt="Cross-section diagram of a silicon photovoltaic solar cell showing how sunlight creates electricity"
                     className="w-full h-auto object-cover"
                   />
                   <div className="p-4 bg-surface-dark text-white text-xs text-center font-mono uppercase tracking-widest">
@@ -146,7 +189,7 @@ export default function AllAboutSolarPage() {
                     src="/assets/solar/solar-how-it-works.png"
                     width={1200}
                     height={800}
-                    alt="Complete Solar Energy Flow Diagram"
+                    alt="Complete solar energy flow diagram showing sun to rooftop panels to inverter to home appliances and electricity grid"
                     className="w-full h-auto"
                   />
                   <div className="absolute top-4 left-4 bg-primary text-white px-4 py-1 text-xs font-bold uppercase tracking-wider">
@@ -162,7 +205,7 @@ export default function AllAboutSolarPage() {
                   { title: "Conversion", desc: "Inverters transform DC current into usable AC current." },
                   { title: "Consumption", desc: "Priority is given to powering your home appliances." },
                   { title: "Storage", desc: "Surplus is stored in modern LFP batteries (Hybrid systems)." },
-                  { title: "Net Metering", desc: "Excess power is fed to the grid, earning you credits." },
+                  { title: "Net Metering", desc: "Excess power is fed to the grid, earning you credits. Most customers save 60–90% from day one." },
                 ].map((step, i) => (
                   <RevealWrapper key={i} staggerChild variant="fadeUp">
                     <div className="flex items-start gap-4 p-4 bg-white border border-border h-full hover:border-primary transition-colors">
@@ -177,6 +220,11 @@ export default function AllAboutSolarPage() {
                   </RevealWrapper>
                 ))}
               </StaggerContainer>
+              <RevealWrapper variant="fadeUp" delay={0.2} className="mt-8 text-center">
+                <Link href="/solar-calculator" className="inline-flex items-center gap-2 text-primary font-semibold underline underline-offset-4 hover:text-primary-light transition-colors">
+                  Calculate your savings with our free Solar Calculator →
+                </Link>
+              </RevealWrapper>
             </div>
           </div>
         </section>
@@ -221,7 +269,7 @@ export default function AllAboutSolarPage() {
                       src="/assets/solar/system-on-grid.png"
                       width={600}
                       height={400}
-                      alt="On-Grid Solar Diagram"
+                      alt="On-grid solar system diagram showing rooftop panels connected to home and electricity grid with net metering"
                       className="w-full h-auto"
                     />
                   </div>
@@ -255,7 +303,7 @@ export default function AllAboutSolarPage() {
                       src="/assets/solar/system-hybrid.png"
                       width={600}
                       height={400}
-                      alt="Hybrid Solar Diagram"
+                      alt="Hybrid solar system diagram combining grid connection and battery storage for 24/7 power security"
                       className="w-full h-auto"
                     />
                   </div>
@@ -289,7 +337,7 @@ export default function AllAboutSolarPage() {
                       src="/assets/solar/system-off-grid.png"
                       width={600}
                       height={400}
-                      alt="Off-Grid Solar Diagram"
+                      alt="Off-grid solar system diagram with battery storage for remote locations and areas with frequent power cuts"
                       className="w-full h-auto"
                     />
                   </div>
@@ -311,7 +359,7 @@ export default function AllAboutSolarPage() {
                   src="/assets/solar/solar-benefits.png"
                   width={600}
                   height={600}
-                  alt="Solar Benefits Illustration"
+                  alt="Illustration showing financial savings and environmental benefits of rooftop solar installation for Indian homes"
                   className="w-full h-auto grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
                 />
               </RevealWrapper>
@@ -416,6 +464,11 @@ export default function AllAboutSolarPage() {
                     <p className="mt-6 text-xs italic">
                       *AdiSolar handles the complete MNRE portal registration and document submission on your behalf.
                     </p>
+                    <div className="mt-6">
+                      <Link href="/get-solar" className="inline-block bg-primary text-white font-bold px-6 py-3 hover:bg-primary-light transition-colors text-sm">
+                        Check your eligibility — book a free site visit
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </RevealWrapper>
@@ -425,7 +478,7 @@ export default function AllAboutSolarPage() {
                     src="/assets/solar/subsidy-placeholder.jpg"
                     width={600}
                     height={400}
-                    alt="Indian Home with Subsidy Badge"
+                    alt="Indian family home with rooftop solar panels and PM Surya Ghar Muft Bijli Yojana government subsidy badge"
                     className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="p-4 bg-accent text-white text-xs text-center font-bold uppercase tracking-widest">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +16,19 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { calculateSolar, formatIndianNumber, type SolarCalculatorResult } from "@/lib/solarCalculator";
+import { SchemaMarkup } from "@/components/seo/SchemaMarkup";
+
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "AdiSolar Solar Savings Calculator",
+  description:
+    "Calculate monthly solar savings, system size, and installation cost from your electricity bill",
+  url: "https://adisolar.in/solar-calculator",
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "All",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+};
 
 export default function SolarCalculatorPage() {
   const [billAmount, setBillAmount] = useState<number>(3000);
@@ -48,6 +62,7 @@ export default function SolarCalculatorPage() {
 
   return (
     <PageTransition>
+      <SchemaMarkup schema={appSchema} />
       <main className="pt-16 lg:pt-20 overflow-hidden">
         {/* 1. PageHero */}
         <motion.section 
@@ -219,7 +234,8 @@ export default function SolarCalculatorPage() {
                 </AnimatePresence>
                 
                 <p className="text-xs text-text-tertiary mt-8 text-center max-w-sm mx-auto">
-                  Estimates are indicative. Actual savings depend on your location, roof area, panel orientation, and consumption patterns. Book a free site visit for an accurate quote.
+                  Estimates are indicative. Actual savings depend on your location, roof area, panel orientation, and consumption patterns. Book a free site visit for an accurate quote.{" "}
+                  <Link href="/all-about-solar" className="underline hover:text-primary transition-colors">Learn more about how solar works.</Link>
                 </p>
               </div>
 

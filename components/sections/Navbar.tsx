@@ -15,6 +15,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "About Us", href: "/about" },
   { label: "All About Solar", href: "/all-about-solar" },
   { label: "Solar Calculator", href: "/solar-calculator" },
+  { label: "Blog", href: "/blog" },
   { label: "Get Solar", href: "/get-solar" },
 ];
 

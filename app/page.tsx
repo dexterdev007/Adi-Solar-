@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -12,6 +13,7 @@ import { RevealWrapper } from "@/components/ui/RevealWrapper";
 import { StaggerContainer } from "@/components/ui/StaggerContainer";
 import { MorphingHeadline } from "@/components/ui/MorphingHeadline";
 import { InfiniteMarquee } from "@/components/ui/InfiniteMarquee";
+import { SchemaMarkup } from "@/components/seo/SchemaMarkup";
 import {
   Sun,
   Zap,
@@ -29,9 +31,100 @@ import {
   Unplug,
 } from "lucide-react";
 
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "AdiSolar",
+  description: "Pan India solar panel installation and services company",
+  url: "https://adisolar.in",
+  telephone: "+91-8882088600",
+  email: "adisolar@gmail.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "New Delhi",
+    addressRegion: "Delhi",
+    addressCountry: "IN",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: "28.6139",
+    longitude: "77.2090",
+  },
+  areaServed: {
+    "@type": "Country",
+    name: "India",
+  },
+  priceRange: "₹₹",
+  openingHours: "Mo-Sa 09:00-18:00",
+  sameAs: ["https://wa.me/918882088600"],
+  serviceType: [
+    "Residential Solar Installation",
+    "Commercial Solar Installation",
+    "Industrial Solar Installation",
+    "Solar Maintenance and AMC",
+  ],
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How much does a solar installation cost in India?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A 3 kW residential solar system costs ₹1,20,000–₹1,80,000 after government subsidy. The PM Surya Ghar Muft Bijli Yojana provides up to ₹78,000 in central subsidy for eligible homeowners. AdiSolar provides free site visits and transparent quotes with no hidden costs.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is there a government subsidy for solar in India?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Under PM Surya Ghar Muft Bijli Yojana, Indian homeowners can receive up to ₹78,000 — ₹30,000 per kW for the first 2 kW and ₹18,000 per kW for the next 1 kW. AdiSolar handles the complete application on your behalf.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How long does solar panel installation take?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A standard residential installation takes 1–2 days. Commercial projects take 3–7 days. AdiSolar schedules at your convenience with minimal disruption.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do solar panels work on cloudy days in India?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Solar panels work on diffused daylight at 10–25% of rated output on cloudy days. India's 4–5 daily peak sun hours ensure excellent year-round performance.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the payback period for solar in India?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The average payback period is 4–6 years. With PM Surya Ghar subsidy, many customers achieve payback in under 4 years. After payback, electricity is essentially free for 20+ more years.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is net metering and how does it work?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Net metering allows your meter to run backwards when solar panels generate more than you consume. Surplus units are credited to your account. AdiSolar handles the net metering application with your local DISCOM.",
+      },
+    },
+  ],
+};
+
 export default function Home() {
   return (
     <PageTransition>
+      <SchemaMarkup schema={localBusinessSchema} />
+      <SchemaMarkup schema={faqSchema} />
       <main className="pt-16 lg:pt-20 overflow-hidden">
         {/* 1. HeroSection */}
         <motion.section
@@ -221,7 +314,7 @@ export default function Home() {
               <RevealWrapper staggerChild variant="scaleIn">
                 <Card variant="standard" className="flex flex-col items-center text-center relative overflow-hidden h-full group !p-0">
                   <div className="w-full h-48 overflow-hidden relative">
-                    <img src="/assets/solar/residential.png" alt="Residential Solar" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src="/assets/solar/residential.png" alt="Solar panels installed on rooftop of residential home in India" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors" />
                     <Badge variant="accent" className="absolute top-4 right-4">Most Popular</Badge>
                   </div>
@@ -237,7 +330,7 @@ export default function Home() {
               <RevealWrapper staggerChild variant="scaleIn">
                 <Card variant="standard" className="flex flex-col items-center text-center h-full group !p-0 overflow-hidden">
                   <div className="w-full h-48 overflow-hidden relative">
-                    <img src="/assets/solar/commercial.png" alt="Commercial Solar" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src="/assets/solar/commercial.png" alt="Commercial solar installation on office building rooftop in India" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors" />
                   </div>
                   <div className="p-6 lg:p-8 pt-4">
@@ -252,7 +345,7 @@ export default function Home() {
               <RevealWrapper staggerChild variant="scaleIn">
                 <Card variant="standard" className="flex flex-col items-center text-center h-full group !p-0 overflow-hidden">
                   <div className="w-full h-48 overflow-hidden relative">
-                    <img src="/assets/solar/industrial.png" alt="Industrial Solar" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src="/assets/solar/industrial.png" alt="Large-scale industrial and institutional solar panel installation on factory roof" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors" />
                   </div>
                   <div className="p-6 lg:p-8 pt-4">
@@ -337,14 +430,32 @@ export default function Home() {
               />
             </RevealWrapper>
             <div className="flex flex-col divide-y divide-border border-y border-border">
-              {[
-                { q: "How much does a solar installation cost?", a: "The cost depends on your electricity consumption and roof area. On average, a 3 kW residential system costs ₹1.5–2 lakh. Use our Solar Calculator for a personalised estimate." },
-                { q: "Is my roof suitable for solar?", a: "Most rooftops in India are suitable. Our team does a free site visit and feasibility check before any commitment." },
-                { q: "How long does installation take?", a: "A standard residential installation takes 1–3 days. Commercial projects may take longer depending on size." },
-                { q: "What happens on cloudy days?", a: "Solar panels work on diffused sunlight too — they continue generating power, just at slightly reduced output. Batteries or grid connectivity ensure uninterrupted supply." },
-                { q: "Are there government subsidies?", a: "Yes. The Government of India offers PM Surya Ghar Muft Bijli Yojana — up to ₹78,000 subsidy for residential rooftop solar. We help you apply." },
-                { q: "What after-sales support do you provide?", a: "We offer monitoring, maintenance, and technical support post-installation. Your system health is our responsibility." },
-              ].map((faq, i) => (
+              {([
+                {
+                  q: "How much does a solar installation cost?",
+                  a: <>The cost depends on your electricity consumption and roof area. On average, a 3 kW residential system costs ₹1.5–2 lakh. <Link href="/solar-calculator" className="text-primary underline underline-offset-2 hover:text-primary-light transition-colors">Use our Solar Calculator</Link> for a personalised estimate.</>,
+                },
+                {
+                  q: "Is my roof suitable for solar?",
+                  a: <>Most rooftops in India are suitable. Our team does a free site visit and feasibility check before any commitment.</>,
+                },
+                {
+                  q: "How long does installation take?",
+                  a: <>A standard residential installation takes 1–3 days. Commercial projects may take longer depending on size.</>,
+                },
+                {
+                  q: "What happens on cloudy days?",
+                  a: <>Solar panels work on diffused sunlight too — they continue generating power, just at slightly reduced output. Batteries or grid connectivity ensure uninterrupted supply.</>,
+                },
+                {
+                  q: "Are there government subsidies?",
+                  a: <>Yes. The Government of India offers PM Surya Ghar Muft Bijli Yojana — up to ₹78,000 subsidy for residential rooftop solar. <Link href="/get-solar" className="text-primary underline underline-offset-2 hover:text-primary-light transition-colors">Book a free site visit</Link> and we&apos;ll handle the entire application for you.</>,
+                },
+                {
+                  q: "What after-sales support do you provide?",
+                  a: <>We offer monitoring, maintenance, and technical support post-installation. Your system health is our responsibility.</>,
+                },
+              ] as { q: string; a: React.ReactNode }[]).map((faq, i) => (
                 <RevealWrapper variant="fadeUp" delay={0.05 * i} key={i}>
                   <details className="group py-4">
                     <summary className="font-semibold text-text-primary cursor-pointer flex justify-between items-center list-none [&::-webkit-details-marker]:hidden">
@@ -362,7 +473,7 @@ export default function Home() {
         {/* 8. ContactStrip */}
         <section className="relative py-24 bg-primary overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <img src="/assets/solar/contact-bg.png" alt="Solar Farm Sunset" className="w-full h-full object-cover opacity-30" />
+            <img src="/assets/solar/contact-bg.png" alt="Solar farm at sunset with rows of photovoltaic panels generating clean energy" className="w-full h-full object-cover opacity-30" />
             <div className="absolute inset-0 bg-primary/60 mix-blend-multiply" />
           </div>
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center gap-6">

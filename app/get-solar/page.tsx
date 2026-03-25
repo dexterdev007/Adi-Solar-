@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -109,7 +110,8 @@ export default function GetSolarPage() {
                       We've Received Your Request! 🎉
                     </h2>
                     <p className="text-text-secondary text-lg mb-8 max-w-sm mx-auto leading-relaxed">
-                      Our team will call you within 24 hours to schedule your free site visit. You can also WhatsApp us directly at +91 8882088600 for a faster response.
+                      Our team will call you within 24 hours to schedule your free site visit. You can also WhatsApp us directly at{" "}
+                      <Link href="tel:+918882088600" className="font-semibold text-primary underline">+91 8882088600</Link> for a faster response.
                     </p>
                     <Button href="https://wa.me/918882088600" variant="primary" size="lg" className="w-full group">
                       <MessageCircle className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />

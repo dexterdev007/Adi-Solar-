@@ -28,9 +28,28 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AdiSolar — Solar Panel Installation Pan India",
+  metadataBase: new URL("https://adisolar.in"),
+  title: "Solar Panel Installation in India | Free Site Visit | AdiSolar",
   description:
-    "AdiSolar provides end-to-end solar panel installation services for residential, commercial, and industrial customers across India. Get a free site visit today.",
+    "AdiSolar provides end-to-end solar installation services across India. Free site visit, certified technicians, and subsidy assistance included. Get your free quote today.",
+  keywords:
+    "solar panel installation India, rooftop solar, solar company India, PM Surya Ghar subsidy, solar installation cost India",
+  alternates: {
+    canonical: "https://adisolar.in",
+  },
+  openGraph: {
+    siteName: "AdiSolar",
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@adisolar",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
